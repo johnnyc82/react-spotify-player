@@ -1,15 +1,16 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import logoSpotify from './logo-spotify.svg';
+import './App.scss';
 
-function Auth(props) {
-  const endpoint = this.props.endpoint;
-  const client_id = this.props.client_id;
-  const redirect_uri = this.props.redirect_uri;
-  const scope = this.props.scope;
+function Authorise(props) {
+  const endpoint = props.endpoint;
+  const client_id = props.client_id;
+  const redirect_uri = props.redirect_uri;
+  const scope = props.scope;
 
   return (
-    <a href="#"></a>
+    <a href={`${endpoint}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join('%20')}&response_type=token`} className="Authorise-link">Spotify authorisation</a>
   );
 }
 
@@ -18,26 +19,15 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <img src={logoSpotify} className="spotify-logo" alt="spotify-logo" />
       </header>
-
       <main>
-        <a
-        className="auth-login"
-        href="https://accounts.spotify.com/authorize?client_id=81cee7973b1a4951a4af313823b614df&redirect_uri=http:%2F%2Flocalhost%3A3000&scope=user-read-private%20user-read-email&response_type=token&state=123"
-        >
-          Spotify authorisation
-        </a>
+        <Authorise
+          endpoint="https://accounts.spotify.com/authorize" 
+          client_id="81cee7973b1a4951a4af313823b614df" 
+          redirect_uri="http:%2F%2Flocalhost%3A3000" 
+          scope={["user-read-private","user-read-email"]}
+        />
       </main>
     </div>
   );
