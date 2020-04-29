@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import logoSpotify from './logo-spotify.svg';
 import './App.scss';
-import Player from './Player';
+// import Player from './Player';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 // Create the user authorisation link
@@ -38,6 +38,54 @@ spotifyApi.setAccessToken(Token());
 
 console.log(spotifyApi);
 
+class Player extends React.Component {
+  constructor() {
+    super();
+    const token = Token();
+    this.state = {
+      loggedIn: token ? true : false,
+      nowPlaying: { name: 'Not Checked', albumArt: '' }
+      }
+    }
+
+  componentDidMount () {
+      const script = document.createElement("script");
+      script.src = "https://sdk.scdn.co/spotify-player.js";
+      script.async = true;
+      document.body.appendChild(script);
+  }
+
+  getNowPlaying(){
+      spotifyApi.getMyCurrentPlaybackState()
+        .then((response) => {
+          this.setState({
+            nowPlaying: { 
+                name: response.item.name, 
+                albumArt: response.item.album.images[0].url
+              }
+          });
+        })
+    }
+
+  render() {
+    return (
+      <div className="player">
+        <div>
+          Now Playing: { this.state.nowPlaying.name }
+        </div>
+        <div>
+          <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
+        </div>
+        { this.state.loggedIn &&
+          <button onClick={() => this.getNowPlaying()}>
+            Check Now Playing
+          </button>
+        }
+      </div>
+    );
+  }
+}
+
 function App() {
   return (
     <div className="App">
@@ -50,7 +98,7 @@ function App() {
           endpoint="https://accounts.spotify.com/authorize" 
           client_id="81cee7973b1a4951a4af313823b614df" 
           redirect_uri="http:%2F%2Flocalhost%3A3000" 
-          scope={["user-read-private","user-read-email"]}
+          scope={["user-read-private","user-read-email", 'user-read-playback-state']}
         />
         <Player />
       </main>
