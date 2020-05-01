@@ -2,7 +2,6 @@ import React from 'react';
 import logo from './logo.svg';
 import logoSpotify from './logo-spotify.svg';
 import './App.scss';
-// import Player from './Player';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 // Create the user authorisation link
@@ -21,51 +20,51 @@ const Authorise = (props) => {
 const Token = () => {
   if (window.location.hash) {
     const access_token = window.location.hash
-    .split('&')[0]
-    .split('=')[1];
-    return (access_token);
+      .split('&')[0]
+      .split('=')[1];
+    return {result:true, value:access_token};
   } 
   else {
-    return ("Access denied");
+    return {result:false, value:"Access denied"};
   }
 }
+console.log("Token: ",Token());
 
-// Initilaise the Spotify Web API library
-const Spotify = require('spotify-web-api-js');
-const s = new Spotify();
+// Initialise the Spotify Web API library
 const spotifyApi = new SpotifyWebApi();
-spotifyApi.setAccessToken(Token());
+spotifyApi.setAccessToken(Token().value);
 
-console.log(spotifyApi);
+console.log(spotifyApi.getMyCurrentPlaybackState());
 
 class Player extends React.Component {
   constructor() {
     super();
-    const token = Token();
+    const token = Token().result;
     this.state = {
       loggedIn: token ? true : false,
       nowPlaying: { name: 'Not Checked', albumArt: '' }
-      }
     }
-
-  componentDidMount () {
-      const script = document.createElement("script");
-      script.src = "https://sdk.scdn.co/spotify-player.js";
-      script.async = true;
-      document.body.appendChild(script);
   }
+
+  // componentDidMount () {
+  //     const script = document.createElement("script");
+  //     script.src = "https://sdk.scdn.co/spotify-player.js";
+  //     script.async = true;
+  //     document.body.appendChild(script);
+  // }
 
   getNowPlaying(){
       spotifyApi.getMyCurrentPlaybackState()
         .then((response) => {
+          console.log("Response: ", response)
           this.setState({
             nowPlaying: { 
                 name: response.item.name, 
                 albumArt: response.item.album.images[0].url
-              }
+            }
           });
         })
-    }
+  }
 
   render() {
     return (
@@ -98,7 +97,7 @@ function App() {
           endpoint="https://accounts.spotify.com/authorize" 
           client_id="81cee7973b1a4951a4af313823b614df" 
           redirect_uri="http:%2F%2Flocalhost%3A3000" 
-          scope={["user-read-private","user-read-email", 'user-read-playback-state']}
+          scope={["user-read-private","user-read-email", "user-read-playback-state"]}
         />
         <Player />
       </main>
