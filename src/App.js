@@ -42,7 +42,7 @@ class Player extends React.Component {
     const token = Token().result;
     this.state = {
       loggedIn: token ? true : false,
-      nowPlaying: { name: 'Not Checked', albumArt: '' }
+      nowPlaying: { trackName: 'Not Checked', artistName: 'Not Checked', albumArt: '' }
     }
   }
 
@@ -59,7 +59,8 @@ class Player extends React.Component {
           console.log("Response: ", response)
           this.setState({
             nowPlaying: { 
-                name: response.item.name, 
+                trackName: response.item.name, 
+                artistName: response.item.artists[0].name,
                 albumArt: response.item.album.images[0].url
             }
           });
@@ -70,7 +71,9 @@ class Player extends React.Component {
     return (
       <div className="player">
         <div>
-          Now Playing: { this.state.nowPlaying.name }
+          <p>Now Playing:</p>
+          <p>Track: { this.state.nowPlaying.trackName }</p>
+          <p>Artist: { this.state.nowPlaying.artistName }</p>
         </div>
         <div>
           <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
@@ -89,8 +92,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <img src={logoSpotify} className="spotify-logo" alt="spotify-logo" />
+        <h1>Spotify API</h1>
+        <h2>Harnessed with React</h2>
+        <img src={logo} className="App-logo" alt="logo" />
       </header>
       <main>
         <Authorise
